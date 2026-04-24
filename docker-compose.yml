@@ -1,10 +1,5 @@
 ## Run this with "docker-compose up" command from the repository directory
 # docker-compose file reference: https://docs.docker.com/compose/compose-file/compose-file-v3/
-version: '3.2'
-
-volumes:
-  config: # can be used for logs as well
-
 services:
 
   rdircd:
@@ -20,7 +15,8 @@ services:
     # Change this to "ports: [6667:6667]" to make rdircd accessible on all interfaces.
     # Default is to only bind to localhost to avoid making it acessible unintentially.
     # rdircd listening on 0.0.0.0 inside container is hardcoded in Dockerfile entrypoint.
-    ports: [127.0.0.1:6667:6667]
+    ports:
+     - 6897:6667
 
     volumes:
       # See README.docker-permissions.md doc for a common "Permission denied" with those.
@@ -28,7 +24,7 @@ services:
       # This will auto-create and mount volume dir from /var/lib/docker/volumes
       # You'd need to create/edit config.ini file there, which --conf-init passed
       #  via "command:" below will create with defaults (if it's not there already).
-      - config:/config
+      - /mnt/md0/rdircd/config:/config
 
       # Alternative - pass through any local dir, e.g. "conf" dir next to this file.
       # If you use line below, then:
