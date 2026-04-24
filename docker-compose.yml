@@ -64,7 +64,6 @@ services:
     - 6867:6667
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=0
-      - net.ipv6.conf.all.forwarding=1
     networks:
       - rdircd
 networks:      
