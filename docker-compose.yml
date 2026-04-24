@@ -25,7 +25,7 @@ services:
       # This will auto-create and mount volume dir from /var/lib/docker/volumes
       # You'd need to create/edit config.ini file there, which --conf-init passed
       #  via "command:" below will create with defaults (if it's not there already).
-      - /mnt/md0/rdircd/config:/config
+      - ${CFGDIRECTORY}/config:/config
 
       # Alternative - pass through any local dir, e.g. "conf" dir next to this file.
       # If you use line below, then:
