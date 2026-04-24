@@ -15,9 +15,10 @@ services:
     # Change this to "ports: [6667:6667]" to make rdircd accessible on all interfaces.
     # Default is to only bind to localhost to avoid making it acessible unintentially.
     # rdircd listening on 0.0.0.0 inside container is hardcoded in Dockerfile entrypoint.
-    ports:
-     - 6897:6667
-
+    network_mode: service:rdircd_gluetun
+    networks:
+     - rdircd
+    env_file: stack.env
     volumes:
       # See README.docker-permissions.md doc for a common "Permission denied" with those.
 
@@ -37,7 +38,35 @@ services:
     # This option will create config.ini file on first run and exit with info-message.
     # For rdircd to start with existing config file(s), following line should be removed.
     command: [--conf-init]
+    
 
     # "command" can be used to pass any extra options to the script.
     # For example, to use a separate writable state.ini file on /config volume.
     #command: [-c, state.ini]
+  rdircd_gluetun:
+    image: qmcgaw/gluetun
+    container_name: rdircd_gluetun
+    restart: unless-stopped
+    environment:
+      - VPN_SERVICE_PROVIDER=custom
+      - VPN_TYPE=wireguard
+      - WIREGUARD_ENDPOINT_IP=162.159.192.1
+      - WIREGUARD_ENDPOINT_PORT=2408
+      - WIREGUARD_PUBLIC_KEY=${WGPUBKEY}
+      - WIREGUARD_PRIVATE_KEY=${WGPRIVKEY}
+      - WIREGUARD_ALLOWED_IPS=0.0.0.0/0,::/0
+      - WIREGUARD_ADDRESSES=172.16.0.2/32
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+    - 6867:6667
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+      - net.ipv6.conf.all.forwarding=1
+    networks:
+      - rdircd
+networks:      
+  rdircd:
+     external: false
