@@ -36,7 +36,7 @@ services:
 
     # This option will create config.ini file on first run and exit with info-message.
     # For rdircd to start with existing config file(s), following line should be removed.
-    command: [--conf-init]
+    # command: [--conf-init]
     
 
     # "command" can be used to pass any extra options to the script.
